@@ -32,6 +32,7 @@ class Config
         }
     }
 
+
     /**
      * Получение конфига по ключу
      * @use config(string $key, mixed $default = null)
