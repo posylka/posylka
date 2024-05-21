@@ -14,8 +14,8 @@ final class Boot
 {
     public function __construct()
     {
-        date_default_timezone_set(config('app_timezone'));
-        define('PROD', config('site_url') === 'https://posylka.kz');
+        date_default_timezone_set(config('app.timezone'));
+        define('PROD', config('app.site_url') === 'https://posylka.kz');
         ob_start();
         try {
             if ($this->needInitSession()) {
@@ -28,8 +28,11 @@ final class Boot
             $response = new Response();
             $response->setIsSuccess(false)
                 ->setStatusCode(\app\core\enums\HttpStatus::HTTP_INTERNAL_SERVER_ERROR->value)
-                ->setMessage($throwable->getMessage())
-                ->send();
+                ->setMessage($throwable->getMessage());
+            if (!PROD) {
+                $response->setContent($throwable->getTrace());
+            }
+            $response->send();
         }
         Session::close();
     }
@@ -37,7 +40,7 @@ final class Boot
     private function route(): void
     {
         $appPath = WWW_PATH . DIRECTORY_SEPARATOR . 'app';
-        $path = $_GET['APP_PATH'] ?? '/';
+        $path = $_SERVER['REQUEST_URI'] ?? '/';
         $oRoutingHelper = RoutingHelper::getInstance();
         $oRoutingHelper->setBaseDir($appPath)->addControllerDirName('controller')->setPrefixChar('_');
 
@@ -92,8 +95,8 @@ final class Boot
                     }
                     break;
                 default:
-                    $response = new \app\system\router\Response([], \app\system\enums\HttpStatus::HTTP_METHOD_NOT_ALLOWED->value);
-                    $response->setMessage(\app\system\enums\HttpStatus::HTTP_METHOD_NOT_ALLOWED->text())
+                    $response = new Response([], HttpStatus::HTTP_METHOD_NOT_ALLOWED->value);
+                    $response->setMessage(HttpStatus::HTTP_METHOD_NOT_ALLOWED->text())
                         ->setIsSuccess(false);
                     break;
             }
@@ -120,15 +123,15 @@ final class Boot
      */
     private function corsHook(): void
     {
-        $allowedOrigin = config('site_url');
+        $allowedOrigin = config('app.site_url');
         if (isset($_SERVER['HTTP_ORIGIN'])) {
-            if (in_array($_SERVER['HTTP_ORIGIN'], config('other_allowed_urls'))) {
+            if (in_array($_SERVER['HTTP_ORIGIN'], config('app.other_allowed_urls'))) {
                 $allowedOrigin = $_SERVER['HTTP_ORIGIN'];
             }
             $urlPieces = parse_url($_SERVER['HTTP_ORIGIN']);
             $domain = $urlPieces['host'] ?? '';
             if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $domain, $regs)) {
-                foreach (config('other_allowed_urls') as $url) {
+                foreach (config('app.other_allowed_urls') as $url) {
                     if (sprintf('*.%s', $regs['domain']) == $url) {
                         $allowedOrigin = $_SERVER['HTTP_ORIGIN'];
                     }

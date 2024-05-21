@@ -177,7 +177,7 @@ class Request
             array_shift($aPathParts);
         }
 
-        if (count($aPathParts) && in_array($this->sModuleName, $this->oHelper->getModuleNames())) {
+        if (count($aPathParts)) {
             foreach ($this->oHelper->getControllerDirNames() as $sControllerDirName) {
                 $aDirs = glob(
                     str_replace('/', DIRECTORY_SEPARATOR, vsprintf('%s/%s/%s/*', [
@@ -185,7 +185,6 @@ class Request
                     ])),
                     GLOB_ONLYDIR
                 );
-
                 $aSubmoduleNames = [];
                 foreach ($aDirs as $sV) {
                     $aDir = explode(DIRECTORY_SEPARATOR, $sV);
@@ -194,7 +193,6 @@ class Request
                         $aSubmoduleNames[] = $sSubmoduleName;
                     }
                 }
-
                 if (in_array($aPathParts[0], $aSubmoduleNames)) {
                     $this->setSubmoduleName($aPathParts[0]);
                     array_shift($aPathParts);

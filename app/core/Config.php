@@ -25,7 +25,6 @@ class Config
 
         foreach ($files as $file) {
             $configs = include $configsPath . '/' . $file;
-
             foreach ($configs as $configKey => $configValue) {
                 $this->configs[str_replace('.php', '', $file) . '.' . $configKey] = $configValue;
             }

@@ -4,7 +4,7 @@ use app\core\ClassLoader as ClassLoader;
 $sAppPath = WWW_PATH . DIRECTORY_SEPARATOR . 'app';
 $oLoader = new ClassLoader();
 $oLoader->addPrefix('app', $sAppPath)
-    ->addTypeDirName('action')
+    ->addTypeDirName('controller')
     ->addTypeDirName('model')
     ->register();
 

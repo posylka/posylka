@@ -9,7 +9,7 @@ trait Singleton
     {}
     private function __clone()
     {}
-    private function __wakeup()
+    public final function __wakeup()
     {}
     protected function init()
     {}

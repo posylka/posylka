@@ -12,8 +12,6 @@ class Dispatcher
     protected Request|null $oRequest = null;
     protected array $aPrefix = [];
     protected array $aControllerDirNames = [];
-    protected array $aControllerClassTypes = [];
-
     public function getRequest(): Request
     {
         return $this->oRequest;
@@ -27,11 +25,6 @@ class Dispatcher
     public function getControllerDirNames(): array
     {
         return $this->aControllerDirNames;
-    }
-
-    public function getControllerClassTypes(): array
-    {
-        return $this->aControllerClassTypes;
     }
 
     protected function setRequest(Request $oRequest): self
@@ -53,13 +46,6 @@ class Dispatcher
     public function addControllerDirName(string $sControllerDirName): self
     {
         $this->aControllerDirNames[] = $sControllerDirName;
-
-        return $this;
-    }
-
-    public function addControllerClassType(string $sControllerClassType): self
-    {
-        $this->aControllerClassTypes[] = $sControllerClassType;
 
         return $this;
     }
@@ -129,28 +115,24 @@ class Dispatcher
         $this->aFilePaths = [];
 
         foreach ($this->aControllerDirNames as $sControllerDirName) {
-            foreach ($this->aControllerClassTypes as $sControllerClassType) {
-                $sController = $this->getConvertedControllerName($this->oRequest->getControllerName());
-                $sController = strlen($sController) ? $sController : 'Index';
-                $sFilePath = $sBaseDir
-                    . str_replace('/', DIRECTORY_SEPARATOR, vsprintf('%s/%s/%s%s%s', [
-                        $this->oRequest->getModuleName(),
-                        $sControllerDirName,
-                        mb_strlen($sSubmoduleName) ? $sSubmoduleName . DIRECTORY_SEPARATOR : '',
-                        $sController,
-                        $sControllerClassType
-                    ]))
-                    . '.php';
+            $sController = $this->getConvertedControllerName($this->oRequest->getControllerName());
+            $sController = strlen($sController) ? $sController : 'Index';
+            $sFilePath = $sBaseDir
+                . str_replace('/', DIRECTORY_SEPARATOR, vsprintf('%s/%s/%s%s', [
+                    $this->oRequest->getModuleName(),
+                    $sControllerDirName,
+                    mb_strlen($sSubmoduleName) ? $sSubmoduleName . DIRECTORY_SEPARATOR : '',
+                    $sController
+                ]))
+                . '.php';
 
-                $this->aFilePaths[] = $sFilePath;
-
-                if (file_exists($sFilePath)) {
-                    $sReturn = $sFilePath;
-                    break 2;
-                }
+            $this->aFilePaths[] = $sFilePath;
+            if (file_exists($sFilePath)) {
+                $sReturn = $sFilePath;
+                break;
             }
-        }
 
+        }
         return $sReturn;
     }
 
