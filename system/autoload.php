@@ -8,4 +8,4 @@ $oLoader->addPrefix('app', $sAppPath)
     ->addTypeDirName('model')
     ->register();
 
-// for composer require_once WWW_PATH . DIRECTORY_SEPARATOR . 'lib' . '/vendor/autoload.php';
+require_once WWW_PATH . DIRECTORY_SEPARATOR . '/vendor/autoload.php';
