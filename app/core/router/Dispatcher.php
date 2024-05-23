@@ -56,7 +56,7 @@ class Dispatcher
         $aResponse = $this->process();
         if ($aResponse['is_set']) {
             $oController = new $aResponse['controller']($aResponse['params']);
-            if ($aResponse['access'] === 'user' && $oController instanceof RestController) {
+            if ($aResponse['access'] === 'private') {
                 $oController->setNeedSession(true);
             }
         } else {
@@ -97,7 +97,7 @@ class Dispatcher
                 (mb_strlen($sSubmoduleName)) ? $sSubmoduleName . '\\' : '',
                 $sControllerClassName
             ]);
-            $aReturn['access'] = in_array($sAccessType, ['any', 'user']) ? $sAccessType : '';
+            $aReturn['access'] = in_array($sAccessType, ['public', 'private']) ? $sAccessType : '';
             $aReturn['params'] = $this->oRequest->getParams();
             $aReturn['is_set'] = true;
         }

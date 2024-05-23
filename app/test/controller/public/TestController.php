@@ -1,6 +1,6 @@
 <?php
 
-namespace app\test\any;
+namespace app\test\public;
 
 use app\core\RestController;
 use app\core\router\Response;
