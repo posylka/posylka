@@ -1,9 +1,33 @@
 version: '3.5'
 services:
-  php:
-    image: php:8.1-cli
-    volumes:
-      - ./:/posylka
+  nginx:
+    container_name: posylka-nginx
+    build:
+      dockerfile: docker/nginx/Dockerfile
+      context: .
     ports:
-      - 8000:8000
-    command: php -S 0.0.0.0:8000 -t posylka
+      - "8000:8000"
+    volumes:
+      - ./:/code/posylka
+  fpm:
+    container_name: posylka-php-fpm
+    image: php:8.1-fpm
+    restart: always
+    volumes:
+      - ./:/code/posylka
+      - ./cnt/:/code/cnt/
+      - ./tmp/:/code/tmp/
+    ports:
+      - "9000:9000"
+
+  postgres:
+    container_name: posylka-postgres
+    image: postgres:alpine
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGVERBOSITY: verbose
