@@ -6,6 +6,8 @@ namespace app\core;
 use app\core\enums\HttpStatus;
 use app\core\router\Request;
 use app\core\router\Response;
+use app\core\validation\Rule;
+use app\core\validation\rules\RuleInterface;
 
 abstract class RestController
 {
@@ -13,6 +15,10 @@ abstract class RestController
     protected int $statusCode;
     protected \app\core\router\Response $response;
     protected \app\core\router\Request $request;
+
+    protected array $aErrors = [];
+
+    protected array $validationParams = [];
 
     public function __construct(protected array $aParams = [])
     {
@@ -93,5 +99,37 @@ abstract class RestController
     public function canDelete(): bool
     {
         return $this->hasAccess();
+    }
+
+    public function validateRequest(): bool
+    {
+//        example
+//        $validationParams = [
+//            'phone' => 'required|kz-phone-number',   delimeter - |
+//            'date-from' => 'required|date-min=17.01.2024|date-max="Monday next week"', delimeter - |, param - =
+//        ];
+        if ($this->request->method() !== 'GET') {
+            $aRules = Rule::$rules;
+            foreach ($this->validationParams as $field => $rules) {
+                foreach (explode('|', $rules) as $rule) {
+                    if (isset($aRules[$rule])) {
+                        $validator = new $aRules[$rule]();
+                        $tmp = explode('=', $rule);
+                        if (!$validator->validate($this->request->all()[$field], $tmp[1])) {
+                            $this->aErrors[$field] = sprintf('Validation error, field = %s, rule = %s', $field, $rule);
+                        }
+                    }
+                }
+            }
+            if (count($this->aErrors)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->aErrors;
     }
 }

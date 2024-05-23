@@ -62,6 +62,11 @@ final class Boot
                 ->setIsSuccess(false);
         } elseif (IS_OPTIONS) {
             $response = new Response();
+        } elseif (!$oController->validateRequest()) {
+            $response->setStatusCode(HttpStatus::HTTP_BAD_REQUEST->value)
+                ->setContent($oController->getErrors())
+                ->setMessage(HttpStatus::HTTP_BAD_REQUEST->text())
+                ->setIsSuccess(false);
         } else {
             switch($oR->method()) {
                 case 'GET':
