@@ -3,12 +3,12 @@
 
 namespace app\core;
 
+use app\core\db\DatabaseProvider;
 use app\core\enums\HttpStatus;
 use app\core\router\Dispatcher;
 use app\core\router\Request;
 use app\core\router\Response;
 use app\core\router\RoutingHelper;
-use Exception;
 
 final class Boot
 {
@@ -21,6 +21,7 @@ final class Boot
             if ($this->needInitSession()) {
                 \app\core\Session::start();
             }
+            DatabaseProvider::init();
             $this->corsHook();
             $this->route();
         } catch (\Throwable $throwable) {
