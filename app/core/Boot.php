@@ -9,6 +9,7 @@ use app\core\router\Dispatcher;
 use app\core\router\Request;
 use app\core\router\Response;
 use app\core\router\RoutingHelper;
+use app\exception\HttpExceptionInterface;
 
 final class Boot
 {
@@ -24,6 +25,15 @@ final class Boot
             DatabaseProvider::init();
             $this->corsHook();
             $this->route();
+        } catch (HttpExceptionInterface $exception) {
+            $response = new Response();
+            $response->setIsSuccess(false)
+                ->setStatusCode($exception->getHttpCode())
+                ->setMessage($exception->getHttpMessage());
+            if (!PROD) {
+                $response->setContent($exception->getTrace());
+            }
+            $response->send();
         } catch (\Throwable $throwable) {
            // Logger::log($throwable); todo logger
             $response = new Response();
