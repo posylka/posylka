@@ -3,7 +3,7 @@ define('WWW_PATH', str_replace('\\', '/', __DIR__));
 define('APP_PATH', dirname(WWW_PATH));
 define('APP_MODE', 'mgrt');
 set_time_limit(0);
-require_once WWW_PATH . '/sys/manuscript.php';
+require_once WWW_PATH . '/system/manuscript.php';
 define('PROD', config('app.site_url') === 'https://posylka.kz');
 date_default_timezone_set(config('app.timezone'));
 
