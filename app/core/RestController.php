@@ -18,6 +18,10 @@ abstract class RestController
 
     protected array $aErrors = [];
 
+//        $validationParams = [
+//            'phone' => 'required|kz-phone-number',   delimeter -> |
+//            'date-from' => 'required|date-min:17.01.2024|date-max:"Monday next week"', delimeter -> |, param -> :
+//        ];
     protected array $validationParams = [];
 
     public function __construct(protected array $aParams = [])
@@ -106,7 +110,7 @@ abstract class RestController
 //        example
 //        $validationParams = [
 //            'phone' => 'required|kz-phone-number',   delimeter - |
-//            'date-from' => 'required|date-min=17.01.2024|date-max="Monday next week"', delimeter - |, param - =
+//            'date-from' => 'required|date-min:17.01.2024|date-max:"Monday next week"', delimeter - |, param - :
 //        ];
         if ($this->request->method() !== 'GET') {
             $aRules = Rule::$rules;
@@ -114,7 +118,7 @@ abstract class RestController
                 foreach (explode('|', $rules) as $rule) {
                     if (isset($aRules[$rule])) {
                         $validator = new $aRules[$rule]();
-                        $tmp = explode('=', $rule);
+                        $tmp = explode(':', $rule);
                         if (!$validator->validate($this->request->all()[$field], $tmp[1])) {
                             $this->aErrors[$field] = sprintf('Validation error, field = %s, rule = %s', $field, $rule);
                         }
