@@ -11,12 +11,15 @@ class DatabaseProvider
     public function __construct()
     {
         $capsule = new Capsule;
+        $sUrl = 'pgsql://postgres:12345678@posylka-postgres:5432/posylka';
         $capsule->addConnection([
             'driver' => config('db.driver'),
-            'host' => config('db.host'),
-            'database' => config('db.database'),
-            'username' => config('db.username'),
-            'password' => config('db.password'),
+            'url' => $sUrl,
+//            'host' => config('db.host'),
+//            'port' => config('db.port'),
+//            'database' => config('db.database'),
+//            'username' => config('db.username'),
+//            'password' => config('db.password'),
             'charset' => config('db.charset'),
             'collation' => config('db.collation'),
             'prefix' => config('db.prefix'),
@@ -25,10 +28,10 @@ class DatabaseProvider
         $capsule->bootEloquent();
     }
 
-    public static function init(string $schema = 'operational'): void
+    public static function init(): void
     {
         if (!isset(self::$instance)) {
-            self::$instance = new static($schema);
+            self::$instance = new static();
         }
     }
 }

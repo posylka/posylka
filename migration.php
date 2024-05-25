@@ -8,15 +8,15 @@ define('PROD', config('app.site_url') === 'https://posylka.kz');
 date_default_timezone_set(config('app.timezone'));
 
 use app\core\db\DatabaseProvider;
+use app\core\db\DB;
 use app\core\db\Migration;
 use app\core\Util;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 
 try {
     DatabaseProvider::init();
-    if (!Schema::hasTable('migrations')) {
-        Schema::create('migrations', function (Blueprint $table) {
+    if (!DB::schema()->hasTable('migrations')) {
+        DB::schema()->create('migrations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('version');

@@ -12,15 +12,14 @@ class Migration
 {
     use \app\core\Singleton;
 
-    private string $path = WWW_PATH . '/app/migrations';
-    private ?Migrations $migration;
+    private string $path = WWW_PATH . '/app/migrations/model';
+    private $migration;
 
     public function execute(): void
     {
         if ($this->hasAccess()) {
             $haveErrors = false;
             $haveMigrations = false;
-
             foreach (scandir($this->path) as $sItem) {
                 if($sItem === '.' || $sItem === '..' || $sItem === 'Migrations.php' || $sItem === 'AbstractMigration.php') {
                     continue;
@@ -88,11 +87,11 @@ class Migration
 
     private function needRun(string $name): bool
     {
-        $this->migration = Migrations::query()
+        $this->migration = DB::table('migrations')
             ->where('name', $name)
             ->first();
         if ($this->migration) {
-            return $this->migration->status !== MigrationStatus::SUCCESS;
+            return $this->migration->status !== MigrationStatus::SUCCESS->value;
         }
         return true;
     }
