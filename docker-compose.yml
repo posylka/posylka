@@ -11,7 +11,9 @@ services:
       - ./:/code/posylka
   fpm:
     container_name: posylka-php-fpm
-    image: php:8.2-fpm
+    build:
+      dockerfile: docker/php-fpm/Dockerfile
+      context: .
     restart: always
     volumes:
       - ./:/code/posylka
@@ -24,7 +26,7 @@ services:
     container_name: posylka-postgres
     image: postgres:alpine
     ports:
-      - "5432:5432"
+      - "15432:5432"
     restart: always
     environment:
       POSTGRES_USER: ${DB_USER}
