@@ -28,7 +28,7 @@ final class Boot
         } catch (HttpExceptionInterface $exception) {
             $response = new Response();
             $response->setIsSuccess(false)
-                ->setStatusCode($exception->getHttpCode())
+                ->setStatusCode($exception->getHttpCode()->value)
                 ->setMessage($exception->getHttpMessage());
             if (!PROD) {
                 $response->setContent($exception->getTrace());
@@ -66,7 +66,7 @@ final class Boot
         $oController = $oDispatcher->handle($oR);
 
         $response = new Response();
-        if ($oController->getNeedSession() && !($_SESSION['id'] ?? false)) {
+        if ($oController->getNeedSession() && !($_SESSION['user_id'] ?? false)) {
             $response->setStatusCode(HttpStatus::HTTP_UNAUTHORIZED->value)
                 ->setMessage(HttpStatus::HTTP_UNAUTHORIZED->text())
                 ->setIsSuccess(false);
@@ -128,8 +128,9 @@ final class Boot
     }
     private function needInitSession(): bool
     {
-        if (isset($_SERVER['HTTP_ACCESS_KEY'])) {
-            $_COOKIE['sid'] = $_SERVER['HTTP_ACCESS_KEY'];
+        if (isset($_SERVER['HTTP_JWT_ACCESS'])) {
+            $decoded = \app\user\Util::decodeAccessToken($_SERVER['HTTP_JWT_ACCESS']);
+            $_COOKIE['sid'] = $decoded['sid'];
         }
         return (isset($_COOKIE['sid']) && $_COOKIE['sid'] != '');
     }

@@ -11,17 +11,16 @@ return new class () extends AbstractMigration
     public function run(): bool
     {
         try {
-            if (!$this->schema->hasTable('users')) {
-                $this->schema->create('users', function (Blueprint $table) {
+            if (!$this->schema->hasTable('tokens')) {
+                $this->schema->create('tokens', function (Blueprint $table) {
                     $table->id();
-                    $table->string('username')->unique();
-                    $table->string('password');
-                    $table->string('phone');
-                    $table->string('status');
+                    $table->string('user_id');
+                    $table->string('user_agent');
+                    $table->text('token');
                     $table->timestamps();
                 });
             }
-            $this->out('user table created');
+            $this->out('tokens table created');
             return true;
         } catch (Exception $e) {
             $this->out($e->getMessage());
