@@ -118,8 +118,12 @@ abstract class RestController
                 foreach (explode('|', $rules) as $rule) {
                     if (isset($aRules[$rule])) {
                         $validator = new $aRules[$rule]();
-                        $tmp = explode(':', $rule);
-                        if (!$validator->validate($this->request->all()[$field], $tmp[1])) {
+                        $params = [];
+                        if (str_contains($rule, ':')) {
+                            $tmp = explode(':', $rule);
+                            $params = i($tmp, 1);
+                        }
+                        if (!$validator->validate($this->request->all()[$field], $params)) {
                             $this->aErrors[$field] = sprintf('Validation error, field = %s, rule = %s', $field, $rule);
                         }
                     }
