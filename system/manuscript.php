@@ -38,6 +38,15 @@ if (!function_exists('config')) {
     }
 }
 
+if (!function_exists('i')) {
+    function i($a, $s, $m = '')
+    {
+        return (isset($a[$s]))
+            ? $a[$s]
+            : $m;
+    }
+}
+
 if (!function_exists('dd')) {
     function dd($mValues)
     {

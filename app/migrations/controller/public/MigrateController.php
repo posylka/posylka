@@ -1,6 +1,6 @@
 <?php
 
-namespace app\something\public;
+namespace app\migrations\public;
 
 use app\core\db\Migration;
 use app\core\RestController;
