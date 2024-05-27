@@ -6,7 +6,7 @@ use app\user\User;
 
 class PushNotification implements NotificationInterface
 {
-    public function setRecipient(User $user): void
+    public function setRecipient(User $user): self
     {
         // TODO: Implement setRecipient() method.
     }

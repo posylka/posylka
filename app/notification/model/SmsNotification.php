@@ -15,9 +15,10 @@ use Mobizon\MobizonApi;
 class SmsNotification implements NotificationInterface
 {
     private string $phone;
-    public function setRecipient(User $user): void
+    public function setRecipient(User $user): self
     {
         $this->phone = Util::purifyPhone($user->phone);
+        return $this;
     }
 
     /**
