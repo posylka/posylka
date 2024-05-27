@@ -132,12 +132,11 @@ final class Boot
         if (isset($_SERVER['HTTP_JWT_ACCESS'])) {
             try {
                 $decoded = \app\user\Util::decodeAccessToken($_SERVER['HTTP_JWT_ACCESS']);
-                $_COOKIE['sid'] = $decoded['sid'];
             } catch (\Exception $exception) {
                 $this->sJwtError = $exception->getMessage();
             }
         }
-        return (isset($_COOKIE['sid']) && $_COOKIE['sid'] != '');
+        return (isset($decoded['sid']) && $decoded['sid'] != '');
     }
 
     /**

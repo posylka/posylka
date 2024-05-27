@@ -10,4 +10,5 @@ return [
     'jwt-refresh-key' => 'jwt-refresh-key',
     'access-token-lifetime' => 1800,
     'refresh-token-lifetime' => 7776000,
+    'verify-code-lifetime' => '3600',
 ];

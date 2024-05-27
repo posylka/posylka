@@ -123,7 +123,7 @@ abstract class RestController
                             $tmp = explode(':', $rule);
                             $params = i($tmp, 1);
                         }
-                        if (!$validator->validate($this->request->all()[$field], $params)) {
+                        if (!$validator->validate(i($this->request->all(), $field), $params)) {
                             $this->aErrors[$field] = sprintf('Validation error, field = %s, rule = %s', $field, $rule);
                         }
                     }
