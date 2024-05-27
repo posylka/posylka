@@ -13,6 +13,7 @@ use app\exception\HttpExceptionInterface;
 
 final class Boot
 {
+    private ?string $sJwtError = null;
     public function __construct()
     {
         date_default_timezone_set(config('app.timezone'));
@@ -68,7 +69,7 @@ final class Boot
         $response = new Response();
         if ($oController->getNeedSession() && !($_SESSION['user_id'] ?? false)) {
             $response->setStatusCode(HttpStatus::HTTP_UNAUTHORIZED->value)
-                ->setMessage(HttpStatus::HTTP_UNAUTHORIZED->text())
+                ->setMessage($this->sJwtError ?? HttpStatus::HTTP_UNAUTHORIZED->text())
                 ->setIsSuccess(false);
         } elseif (IS_OPTIONS) {
             $response = new Response();
@@ -129,8 +130,12 @@ final class Boot
     private function needInitSession(): bool
     {
         if (isset($_SERVER['HTTP_JWT_ACCESS'])) {
-            $decoded = \app\user\Util::decodeAccessToken($_SERVER['HTTP_JWT_ACCESS']);
-            $_COOKIE['sid'] = $decoded['sid'];
+            try {
+                $decoded = \app\user\Util::decodeAccessToken($_SERVER['HTTP_JWT_ACCESS']);
+                $_COOKIE['sid'] = $decoded['sid'];
+            } catch (\Exception $exception) {
+                $this->sJwtError = $exception->getMessage();
+            }
         }
         return (isset($_COOKIE['sid']) && $_COOKIE['sid'] != '');
     }
