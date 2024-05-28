@@ -47,7 +47,20 @@ if (!function_exists('i')) {
     }
 }
 
+if (!function_exists('__')) {
+    /**
+     * Переводчик
+     */
+    function __(string $message, array $data = [], ?string $lang = null): string
+    {
+        return \app\core\Locale::getInstance($lang)->translate($message, $data);
+    }
+}
+
 if (!function_exists('dd')) {
+    /**
+     * Debug
+     */
     function dd($mValues)
     {
         $iNumArgs = func_num_args();
