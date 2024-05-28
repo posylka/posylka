@@ -3,8 +3,10 @@
 
 namespace app\user\private;
 
+use app\core\enums\UserStatus;
 use app\core\RestController;
 use app\core\router\Response;
+use app\events\Event;
 use app\exception\InvalidCodeException;
 use app\notification\Factory as NotifyFactory;
 use app\user\User;
@@ -40,10 +42,12 @@ class ProfileController extends RestController
         if ($this->getParam(0) === 'code') {
             /** @var Verify $verify */
             $verify = Verify::query()
-                ->where('user_id', $_SESSION['user_id'])
+                ->where('user_id', $this->user->id)
                 ->firstOrFail();
+            $event = $this->user->status === UserStatus::NOT_VERIFIED ? 'verify' : 'default';
             if ($verify->verify($this->request->post('code'))) {
                 $verify->execute();
+                Event::get($event)->trigger($this->user);
                 $this->response->setContent([])->setIsSuccess(true)->setMessage('Data successfully refreshed');
             } else {
                 throw new InvalidCodeException();
@@ -51,12 +55,13 @@ class ProfileController extends RestController
         } else {
             /** @var Verify $verify */
             $verify = Verify::query()
-                ->where('user_id', $_SESSION['user_id'])
+                ->where('user_id', $this->user->id)
                 ->firstOrNew();
             $data = [
                 'username' => $this->request->post('username') ?? $this->user->username,
                 'phone' => Util::purifyPhone($this->request->post('phone') ?? $this->user->phone),
                 'password' => password_hash($this->request->post('password') ?? $this->user->password, PASSWORD_BCRYPT),
+                'status' => UserStatus::VERIFIED,
             ];
             $code = random_int(100000, 999999);
             $verify->blank($this->user->id, get_class($this->user), $this->user->id, $data, $code);
