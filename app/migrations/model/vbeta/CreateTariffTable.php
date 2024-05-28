@@ -22,7 +22,7 @@ return new class () extends AbstractMigration
                     $table->timestamps();
                 });
             }
-            $this->out('verify table created');
+            $this->out('tariff table created');
             return true;
         } catch (Exception $e) {
             $this->out($e->getMessage());
