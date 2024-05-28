@@ -7,6 +7,7 @@ use app\core\enums\UserStatus;
 use app\core\RestController;
 use app\core\router\Response;
 use app\events\Event;
+use app\exception\CodeExpiredException;
 use app\exception\InvalidCodeException;
 use app\notification\Factory as NotifyFactory;
 use app\user\User;
@@ -37,6 +38,9 @@ class ProfileController extends RestController
         ])->setIsSuccess(true)->setMessage('user data');
     }
 
+    /**
+     * @throws CodeExpiredException|InvalidCodeException
+     */
     public function post(): Response
     {
         if ($this->getParam(0) === 'code') {
