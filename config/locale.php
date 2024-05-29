@@ -1,5 +1,5 @@
 <?php
 return [
-    'languages' => ['kz', 'ru', 'en'],
+    'languages' => ['kz', 'ru'],
     'default' => 'kz',
 ];

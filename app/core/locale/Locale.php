@@ -2,6 +2,8 @@
 
 namespace app\core;
 
+use DirectoryIterator;
+
 class Locale
 {
     use Singleton;
@@ -54,5 +56,46 @@ class Locale
             }
         }
         return $message ?? '';
+    }
+
+    public function getUntranslated(): array
+    {
+        $directoryToScan = WWW_PATH . '/app';
+        $textValues = [];
+
+        $this->scanFiles($directoryToScan, $textValues);
+
+        $textValues = array_unique($textValues);
+        $untranslated = [];
+        foreach ($textValues as $value) {
+            $value = current(explode("'", $value));
+            if (!\app\core\Locale::getInstance()->hasTranslation($value)) {
+                $untranslated[] = $value;
+            }
+        }
+
+        return $untranslated;
+    }
+
+    private function scanFiles(string $directory, array &$textValues): void
+    {
+        $dir = new DirectoryIterator($directory);
+        foreach ($dir as $fileInfo) {
+            if (!$fileInfo->isDot()) {
+                if ($fileInfo->isDir()) {
+                    $this->scanFiles($fileInfo->getPathname(), $textValues);
+                } elseif ($fileInfo->isFile() && $fileInfo->getExtension() === 'php') {
+                    $contents = file_get_contents($fileInfo->getPathname());
+                    $pattern = '/__\((["\'])(.*?)\\1\)/';
+                    preg_match_all($pattern, $contents, $matches);
+                    $textValues = array_merge($textValues, $matches[2]);
+                }
+            }
+        }
+    }
+
+    public function hasTranslation(string $key): bool
+    {
+        return isset($this->translations[$key]);
     }
 }
