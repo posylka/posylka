@@ -13,7 +13,7 @@ class Verify extends Model
 
     public function verify(string $sCode): bool
     {
-        if (strtotime($this->updated_at) + config('verify-code-lifetime') < time()) {
+        if (strtotime($this->updated_at) + config('app.verify-code-lifetime') < time()) {
             throw new CodeExpiredException();
         }
         if ($this->code === $sCode) {
