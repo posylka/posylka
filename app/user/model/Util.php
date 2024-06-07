@@ -15,7 +15,7 @@ class Util
      */
     public static function signUp(string $username, string $password): User
     {
-        if (DB::table('user')->where('username', $username)->first()) {
+        if (User::query()->where('username', $username)->first()) {
             throw new UserAlreadyExistsException();
         }
         $oUser = new User();
