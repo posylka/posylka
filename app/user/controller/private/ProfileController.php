@@ -71,7 +71,7 @@ class ProfileController extends RestController
             $verify->blank($this->user->id, get_class($this->user), $this->user->id, $data, $code);
             $verify->save();
             $this->user->phone = Util::purifyPhone($this->request->post('phone'));
-            NotifyFactory::get('sms')->setRecipient($this->user)->notify($code);
+            if (PROD) NotifyFactory::get('sms')->setRecipient($this->user)->notify($code);
             $this->response->setMessage('Security code sent to ' . $this->user->phone)->setIsSuccess(true);
         }
         return $this->response;
