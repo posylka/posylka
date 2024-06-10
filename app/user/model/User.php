@@ -20,4 +20,13 @@ class User extends Model
         }
         return $user;
     }
+
+    public function getData(): array
+    {
+        return [
+            'user_id' => $this->user_id,
+            'phone' => $this->phone,
+            'username' => $this->username
+        ];
+    }
 }

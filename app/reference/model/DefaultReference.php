@@ -5,7 +5,7 @@ namespace app\reference;
 class DefaultReference implements ReferenceInterface
 {
 
-    public static function getValueById(int $id): string
+    public static function getValueById(int $id): mixed
     {
         return '';
     }

@@ -1,7 +1,8 @@
 <?php
 
-namespace app\core;
+namespace app\core\locale;
 
+use app\core\Singleton;
 use DirectoryIterator;
 
 class Locale
@@ -42,6 +43,11 @@ class Locale
                 }
             }
         }
+    }
+
+    public function getTranslations(): array
+    {
+        return $this->translations;
     }
 
     public function translate(string $code, array $data = []): string

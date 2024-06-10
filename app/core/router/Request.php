@@ -3,6 +3,8 @@
 
 namespace app\core\router;
 
+use app\core\Util;
+
 class Request
 {
     protected RoutingHelper|null $oHelper = null;
@@ -110,6 +112,11 @@ class Request
     public function getParams(): array
     {
         return $this->aParams;
+    }
+
+    final public function getParam(int $id, $default = '')
+    {
+        return Util::getParam($this->aParams, $id, $default);
     }
 
     public function setHelper(RoutingHelper $oHelper): self

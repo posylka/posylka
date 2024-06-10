@@ -23,7 +23,7 @@ class ProfileController extends RestController
     public function __construct(array $aParams = [])
     {
         parent::__construct($aParams);
-        $this->user = User::query()->findOrFail($_SESSION['user_id'] ?? 0);
+        $this->user = User::getCurrentUser();
         if ($this->getParam(0) === 'code') {
             $this->validationParams = ['code' => 'required'];
         }
@@ -48,7 +48,7 @@ class ProfileController extends RestController
             $verify = Verify::query()
                 ->where('user_id', $this->user->id)
                 ->firstOrFail();
-            $event = $this->user->status === UserStatus::NOT_VERIFIED ? 'verify' : 'default';
+            $event = $this->user->status === UserStatus::NOT_VERIFIED->value ? 'verify' : 'default';
             if ($verify->verify($this->request->post('code'))) {
                 $verify->execute();
                 Event::get($event)->trigger($this->user);

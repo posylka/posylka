@@ -2,14 +2,14 @@
 
 namespace app\reference;
 
-use app\core\Locale;
+use app\core\locale\Locale;
 use Illuminate\Database\Eloquent\Model;
 
 class CitiesReference extends Model implements ReferenceInterface
 {
     protected $table = 'cities_reference';
     protected $fillable = ['ru', 'kz'];
-    public static function getValueById(int $id): string
+    public static function getValueById(int $id): mixed
     {
         $lang = Locale::getInstance()->getLang();
         return CitiesReference::query()->findOrFail($id)->$lang;
