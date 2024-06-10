@@ -23,9 +23,17 @@ final class Boot
             if ($this->needInitSession()) {
                 \app\core\Session::start();
             }
-            DatabaseProvider::init();
-            $this->corsHook();
-            $this->route();
+            if ($this->sJwtError) {
+                $response = new Response();
+                $response->setStatusCode(HttpStatus::HTTP_UNAUTHORIZED->value)
+                    ->setMessage($this->sJwtError)
+                    ->setIsSuccess(false)
+                    ->send();
+            } else {
+                DatabaseProvider::init();
+                $this->corsHook();
+                $this->route();
+            }
         } catch (HttpExceptionInterface $exception) {
             $response = new Response();
             $response->setIsSuccess(false)
