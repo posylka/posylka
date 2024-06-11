@@ -35,7 +35,10 @@ class RouteController extends RestController
     {
         try {
             if ($this->getParam(0, false)) {
-                $route = Route::query()->findOrFail($this->getParam(0));
+                $route = Route::query()
+                    ->where('user_id', User::getCurrentUser()->id)
+                    ->where('id', $this->getParam(0))
+                    ->findOrFail($this->getParam(0));
             } else {
                 $route = Route::query()
                     ->where('user_id', User::getCurrentUser()->id)
@@ -45,8 +48,8 @@ class RouteController extends RestController
                     $route = new Route();
                 }
             }
-            $route->fillByRequest($this->request);
-            $route->save();
+            $route->fillByRequest($this->request)
+                ->save();
             return $this->response->setMessage('ok');
         } catch (\Exception $exception) {
             throw new \Exception($exception->getMessage());
