@@ -42,17 +42,6 @@ class Route extends Model
         );
     }
 
-    public static function makeGet(): array
-    {
-        $a = [];
-        foreach (Route::query()
-             ->where('user_id', User::getCurrentUser()->id)
-             ->lazyById(10) as $route) {
-            $a[$route->id] = $route->toArray();
-        }
-        return $a;
-    }
-
     public function fillByRequest(Request $request): self
     {
         $this->user_id = User::getCurrentUser()->id;
