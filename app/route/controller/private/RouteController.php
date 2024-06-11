@@ -7,6 +7,7 @@ use app\core\router\Response;
 use app\route\Route;
 use app\tariff\Tariff;
 use app\user\User;
+use Illuminate\Support\Carbon;
 
 class RouteController extends RestController
 {
@@ -26,7 +27,13 @@ class RouteController extends RestController
             if ($this->getParam(0, false)) {
                 $route = Route::query()->findOrFail($this->getParam(0));
             } else {
-                $route = new Route();
+                $route = Route::query()
+                    ->where('user_id', User::getCurrentUser()->id)
+                    ->where('datetime', $this->request->post('datetime'))
+                    ->first();
+                if (!$route) {
+                    $route = new Route();
+                }
             }
             $route->fillByRequest($this->request);
             $route->save();

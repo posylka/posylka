@@ -4,6 +4,7 @@ return [
     'tmp_path' => WWW_PATH . '/tmp',
     'migrate_files_path' => WWW_PATH . '/cnt/migrate',
     'timezone' => 'Asia/Almaty',
+    'datetime-format' => 'd-m-Y H:i',
     'site_url' => 'localhost',
     'other_allowed_urls' => ['127.0.0.1'],
     'mgrt-key' => 'AZMImdmwini9u829hfu2on',
