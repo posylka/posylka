@@ -29,4 +29,9 @@ class User extends Model
             'username' => $this->username
         ];
     }
+
+    public function isVerified(): bool
+    {
+        return $this->status === UserStatus::VERIFIED->value;
+    }
 }
