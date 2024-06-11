@@ -13,7 +13,12 @@ class RouteController extends RestController
     public function get(): Response
     {
         if ($this->getParam(0, false)) {
-            $this->response->setContent(Route::query()->findOrFail($this->getParam(0))->toArray());
+            $this->response->setContent(
+                Route::query()
+                ->where('user_id', User::getCurrentUser()?->id)
+                ->where('id', $this->getParam(0))
+                ->firstOrFail()->toArray()
+            );
         } else {
             $this->response->setContent(Route::makeGet());
         }
