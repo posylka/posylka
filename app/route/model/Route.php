@@ -48,7 +48,6 @@ class Route extends Model
         $this->city_to = $request->post('cityTo');
         $this->city_from = $request->post('cityFrom');
         $this->description = $request->post('description');
-        $this->user_data = User::getCurrentUser()->getData();
         $this->renew = $request->post('renew');
         $this->datetime = $request->post('datetime');
         return $this;

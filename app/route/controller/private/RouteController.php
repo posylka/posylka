@@ -12,23 +12,13 @@ class RouteController extends RestController
 {
     public function get(): Response
     {
-        if ($this->getParam(0, false)) {
-            $this->response->setContent(
-                Route::query()
-                ->where('user_id', User::getCurrentUser()?->id)
-                ->where('id', $this->getParam(0))
-                ->firstOrFail()->toArray()
-            );
-        } else {
-            $a = [];
-            foreach (Route::query()
-                     ->where('user_id', User::getCurrentUser()->id)
-                     ->lazyById(10) as $route) {
-                $a[$route->id] = $route->toArray();
-            }
-            $this->response->setContent($a);
+        $route = Route::query()->findOrFail($this->getParam(0))->toArray();
+        /** @var User $user */
+        $user = User::query()->findOrFail($route['user_id']);
+        if (Tariff::check(User::getCurrentUser()?->id)) {
+            $route['user_data'] = $user->getData();
         }
-        return $this->response;
+        return $this->response->setContent($route);
     }
 
     public function post(): Response
@@ -59,10 +49,6 @@ class RouteController extends RestController
 
     public function hasAccess(): bool
     {
-        $user = User::getCurrentUser();
-        if (!$user) return false;
-        /** @var Tariff $tariff */
-        $tariff = Tariff::query()->where('user_id', $user->id)->firstOrNew();
-        return $tariff->check();
+        return Tariff::check(User::getCurrentUser()?->id);
     }
 }

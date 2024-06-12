@@ -20,7 +20,6 @@ return new class () extends AbstractMigration
                     $table->string('description');
                     $table->string('renew')->nullable(false);
                     $table->string('user_id')->nullable(false);
-                    $table->json('user_data')->nullable(false);
                     $table->timestamps();
                 });
             }
