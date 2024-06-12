@@ -4,30 +4,22 @@ namespace app\order\private;
 
 use app\core\RestController;
 use app\core\router\Response;
+use app\exception\PurchaseTariffException;
 use app\order\Order;
+use app\tariff\Tariff;
 use app\user\User;
 
 class OrderController extends RestController
 {
     public function get(): Response
     {
-        if ($this->getParam(0, false)) {
-            $this->response->setContent(
-                Order::query()
-                    ->where('user_id', User::getCurrentUser()?->id)
-                    ->where('id', $this->getParam(0))
-                    ->firstOrFail()->toArray()
-            );
-        } else {
-            $a = [];
-            foreach (Order::query()
-                         ->where('user_id', User::getCurrentUser()->id)
-                         ->lazyById(10) as $order) {
-                $a[$order->id] = $order->toArray();
-            }
-            $this->response->setContent($a);
+        $order = Order::query()->findOrFail($this->getParam(0))->toArray();
+        /** @var User $user */
+        $user = User::query()->findOrFail($order['user_id']);
+        if (Tariff::check(User::getCurrentUser()?->id)) {
+            $order['user_data'] = $user->getData();
         }
-        return $this->response;
+        return $this->response->setContent($order);
     }
 
     public function post(): Response

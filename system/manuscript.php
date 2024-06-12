@@ -53,7 +53,7 @@ if (!function_exists('__')) {
      */
     function __(string $message, array $data = [], ?string $lang = null): string
     {
-        return \app\core\Locale::getInstance($lang)->translate($message, $data);
+        return \app\core\locale\Locale::getInstance($lang)->translate($message, $data);
     }
 }
 
