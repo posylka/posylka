@@ -14,17 +14,18 @@ class Tariff extends Model
         'balance' => 0
     ];
 
-    public function check(): bool
+    public static function check(?string $user_id): bool
     {
-        $plan = Plan::get($this->identifier);
-        if ($this->start_time + $plan->duration < time()) {
-            try {
-                $this->renew();
-            } catch (\Exception $exception) {
-                return false;
+        if (!$user_id) return false;
+        /** @var Tariff $tariff */
+        $tariff = self::query()->where('user_id', $user_id)->first();
+        if ($tariff) {
+            $plan = Plan::get($tariff->identifier);
+            if ($tariff->start_time + $plan->duration >= time()) {
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
