@@ -60,7 +60,7 @@ final class Boot
     private function route(): void
     {
         $appPath = WWW_PATH . DIRECTORY_SEPARATOR . 'app';
-        $path = $_SERVER['REQUEST_URI'] ?? '/';
+        $path = $_GET['APP_PATH'] ?? '/';
         $oRoutingHelper = RoutingHelper::getInstance();
         $oRoutingHelper->setBaseDir($appPath)->addControllerDirName('controller')->setPrefixChar('_');
 
